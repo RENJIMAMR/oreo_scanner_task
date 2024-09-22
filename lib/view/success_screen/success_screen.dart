@@ -7,6 +7,7 @@ import 'package:oreo_scanner_task/controller/add_item_screen_controller.dart';
 import 'package:oreo_scanner_task/global_widgets/custom_button.dart';
 import 'package:oreo_scanner_task/utils/constants/color_constants.dart';
 import 'package:oreo_scanner_task/utils/constants/image_constants.dart';
+import 'package:oreo_scanner_task/view/add_item_screen/add_item_screen.dart';
 import 'package:oreo_scanner_task/view/bottom_nav_bar_screen/botttom_nav_bar_screen.dart';
 import 'package:provider/provider.dart';
 
@@ -53,25 +54,11 @@ class _SuccessScreenState extends State<SuccessScreen> {
             ),
             TextButton(
               onPressed: () async {
-                // String barcodeResult = "";
-                // Future<void> scanBarcode() async {
-                //   try {
-                //     var result = await BarcodeScanner.scan();
-                //     setState(() {
-                //       barcodeResult = result.rawContent;
-                //     });
-
-                //     if (barcodeResult.isNotEmpty) {
-                //       log(barcodeResult.toString() as num);
-                //       context
-                //           .read<AddItemScreenController>()
-                //           .addScannedItemToBag(
-                //               id: barcodeResult.toString(), context: context);
-                //     }
-                //   } catch (e) {
-                //     log("Error scanning barcode: $e" as num);
-                //   }
-                // }
+                Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => AddItemScreen(),
+                    ));
               },
               child: Text("Add more",
                   style: GoogleFonts.inter(

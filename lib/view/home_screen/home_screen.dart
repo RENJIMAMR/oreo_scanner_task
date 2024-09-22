@@ -4,20 +4,25 @@ import 'package:barcode_scan2/barcode_scan2.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:oreo_scanner_task/controller/add_item_screen_controller.dart';
+import 'package:oreo_scanner_task/controller/home_screen_controller.dart';
 import 'package:oreo_scanner_task/utils/constants/color_constants.dart';
 import 'package:oreo_scanner_task/utils/constants/image_constants.dart';
+import 'package:oreo_scanner_task/view/filtering_screen/filtering_screen.dart';
+import 'package:oreo_scanner_task/view/history_screen/history_screen.dart';
 import 'package:oreo_scanner_task/view/home_screen/widget/recent_itemJ_card.dart';
+
 import 'package:provider/provider.dart';
 
 class HomeScreen extends StatefulWidget {
   final TabController tabController;
-  const HomeScreen({super.key, required this.tabController});
+  HomeScreen({super.key, required this.tabController});
   @override
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
 class _HomeScreenState extends State<HomeScreen> {
   String barcodeResult = "";
+
   Future<void> scanBarcode() async {
     try {
       var result = await BarcodeScanner.scan();
@@ -26,7 +31,6 @@ class _HomeScreenState extends State<HomeScreen> {
       });
 
       if (barcodeResult.isNotEmpty) {
-        log(barcodeResult.toString());
         // Navigate to the second tab after scanning
         context.read<AddItemScreenController>().addScannedItemToBag(
             id: barcodeResult.toString(),
@@ -40,12 +44,23 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   @override
+  void initState() {
+    WidgetsBinding.instance.addPostFrameCallback(
+      (timeStamp) async {
+        context.read<HomeScreenController>().getBagItems();
+      },
+    );
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       extendBody: true,
       body: SafeArea(
         child: SingleChildScrollView(
-          child: Column(
+            child: Consumer<HomeScreenController>(
+          builder: (context, screenProvider, child) => Column(
             children: [
               Padding(
                 padding: const EdgeInsets.only(left: 16, top: 30, right: 16),
@@ -143,7 +158,13 @@ class _HomeScreenState extends State<HomeScreen> {
                         SizedBox(width: 20),
                         Expanded(
                           child: InkWell(
-                            onTap: () {},
+                            onTap: () {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => FilteringScreen(),
+                                  ));
+                            },
                             child: Card(
                               color: Color(0xffF8F8FB),
                               child: Padding(
@@ -171,7 +192,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                       ),
                                       SizedBox(height: 14),
                                       Text(
-                                        "Checkouts 0",
+                                        "Checkouts ${screenProvider.bagList.length}",
                                         style: GoogleFonts.inter(
                                             fontWeight: FontWeight.bold,
                                             fontSize: 15,
@@ -198,29 +219,74 @@ class _HomeScreenState extends State<HomeScreen> {
                           style: GoogleFonts.inter(
                               fontSize: 20, fontWeight: FontWeight.bold),
                         ),
-                        Text(
-                          "more",
-                          style: GoogleFonts.inter(
-                              fontSize: 15, fontWeight: FontWeight.bold),
+                        TextButton(
+                          child: Text(
+                            "more",
+                            style: GoogleFonts.inter(
+                                fontSize: 15, fontWeight: FontWeight.bold),
+                          ),
+                          onPressed: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => HistoryScreen(),
+                                ));
+                          },
                         ),
                       ],
                     ),
                   ],
                 ),
               ),
-              ListView.separated(
-                padding: EdgeInsets.symmetric(horizontal: 35, vertical: 20),
-                shrinkWrap: true,
-                itemCount: 10,
-                physics: NeverScrollableScrollPhysics(),
-                itemBuilder: (context, index) => RecentItemCard(),
-                separatorBuilder: (context, index) => SizedBox(
-                  height: 16,
-                ),
-              )
+              screenProvider.bagList.isNotEmpty
+                  ? ListView.separated(
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 35, vertical: 20),
+                      shrinkWrap: true,
+                      itemCount: screenProvider.bagList.length,
+                      physics: NeverScrollableScrollPhysics(),
+                      itemBuilder: (context, index) => RecentItemCard(
+                        bagDetails: screenProvider.bagList[index],
+                      ),
+                      separatorBuilder: (context, index) => SizedBox(
+                        height: 16,
+                      ),
+                    )
+                  : Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Image.asset(
+                            ImageConstants.addItem,
+                            height: 170,
+                            fit: BoxFit.cover,
+                          ),
+                          SizedBox(
+                            height: 15,
+                          ),
+                          Text(
+                            'You don’t have any documents',
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          SizedBox(
+                            height: 10,
+                          ),
+                          Text(
+                            'Sync docs accross smartphones, tablets, and computers',
+                            style: TextStyle(
+                              fontSize: 13,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
             ],
           ),
-        ),
+        )),
       ),
     );
   }

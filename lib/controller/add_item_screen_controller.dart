@@ -25,7 +25,7 @@ class AddItemScreenController with ChangeNotifier {
           isRawMaterial: product.isRawMaterial,
           itemId: product.itemId,
           name: product.name,
-          number: 1, // setting the initila required number of items to one
+          number: 1, // setting the initially required number of items to one
           quantity: product.quantity,
         ));
       } catch (e) {
@@ -55,7 +55,7 @@ class AddItemScreenController with ChangeNotifier {
       scannedItems[index].number = scannedItems[index].number - 1;
     } else {
       scannedItems.removeAt(
-          index); // to remove  and item  if the item number is less than one
+          index); // to remove  the item  if the item number is less than one
     }
     notifyListeners();
   }

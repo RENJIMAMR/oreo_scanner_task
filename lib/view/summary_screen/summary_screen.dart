@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:oreo_scanner_task/controller/add_item_screen_controller.dart';
+import 'package:oreo_scanner_task/controller/home_screen_controller.dart';
 import 'package:oreo_scanner_task/global_widgets/custom_button.dart';
+import 'package:oreo_scanner_task/model/bag_model.dart';
 import 'package:oreo_scanner_task/model/product_model.dart';
 import 'package:oreo_scanner_task/utils/constants/color_constants.dart';
 import 'package:oreo_scanner_task/utils/constants/image_constants.dart';
@@ -10,13 +12,32 @@ import 'package:oreo_scanner_task/view/success_screen/success_screen.dart';
 
 import 'package:provider/provider.dart';
 
-class SummaryScreen extends StatelessWidget {
-  const SummaryScreen({super.key, required this.bag});
+class SummaryScreen extends StatefulWidget {
+  const SummaryScreen(
+      {super.key,
+      required this.bag,
+      this.isPreview = false,
+      this.date,
+      this.time});
   final List<ProductModel> bag;
+  final bool isPreview; // just to view the summary only
+  final String? date;
+  final String? time;
+
+  @override
+  State<SummaryScreen> createState() => _SummaryScreenState();
+}
+
+class _SummaryScreenState extends State<SummaryScreen> {
+  @override
+  void initState() {
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(),
       body: SafeArea(
         child: SingleChildScrollView(
           child: Column(
@@ -71,12 +92,16 @@ class SummaryScreen extends StatelessWidget {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                "11/09/2024",
+                                widget.date ??
+                                    DateFormat("dd/MM/yyyy")
+                                        .format(DateTime.now()),
                                 style: GoogleFonts.inter(
                                     fontWeight: FontWeight.bold, fontSize: 14),
                               ),
                               Text(
-                                "3 PM",
+                                widget.time ??
+                                    DateFormat("hh:mm a")
+                                        .format(DateTime.now()),
                                 style: GoogleFonts.inter(
                                     fontWeight: FontWeight.bold, fontSize: 14),
                               ),
@@ -139,21 +164,22 @@ class SummaryScreen extends StatelessWidget {
                                         CrossAxisAlignment.start,
                                     children: [
                                       Text(
-                                        bag[index].name.toString(),
+                                        widget.bag[index].name.toString(),
                                         style: GoogleFonts.inter(
                                             fontWeight: FontWeight.bold,
                                             fontSize: 14),
                                       ),
                                       SizedBox(height: 10),
                                       Text(
-                                        bag[index].batchNumber.toString(),
+                                        widget.bag[index].batchNumber
+                                            .toString(),
                                         style: GoogleFonts.inter(
                                             fontWeight: FontWeight.bold,
                                             fontSize: 14),
                                       ),
                                       SizedBox(height: 10),
                                       Text(
-                                        "${bag[index].number.toString()} X  ${bag[index].quantity.toString()}",
+                                        "${widget.bag[index].number.toString()} X  ${widget.bag[index].quantity.toString()}",
                                         style: GoogleFonts.inter(
                                             fontWeight: FontWeight.bold,
                                             fontSize: 14),
@@ -169,26 +195,39 @@ class SummaryScreen extends StatelessWidget {
                             thickness: 1.5,
                             color: Colors.black,
                           ),
-                      itemCount: bag.length),
+                      itemCount: widget.bag.length),
                 ),
               ),
             ],
           ),
         ),
       ),
-      bottomNavigationBar: CustomButton(
-        buttonText: "Proceed",
-        onButtonTapped: () {
-          context.read<AddItemScreenController>().clearItemsInBag();
-          Navigator.pushAndRemoveUntil(
-            context,
-            MaterialPageRoute(
-              builder: (context) => SuccessScreen(),
+      bottomNavigationBar: widget.isPreview
+          ? null
+          : CustomButton(
+              buttonText: "Proceed",
+              onButtonTapped: () async {
+                await context.read<HomeScreenController>().addBagItem(BagModel(
+                      date: DateFormat("dd/MM/yyyy")
+                          .format(DateTime.now()), // Format for date
+                      time: DateFormat("hh:mm a").format(
+                          DateTime.now()), // Format for time (e.g., 10:30 AM)
+                      bagItems: widget.bag,
+                    ));
+
+                context
+                    .read<AddItemScreenController>()
+                    .clearItemsInBag(); // to clear the previous bag data after successful  creation of order
+
+                Navigator.pushAndRemoveUntil(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => SuccessScreen(),
+                  ),
+                  (route) => false,
+                );
+              },
             ),
-            (route) => false,
-          );
-        },
-      ),
     );
   }
 }

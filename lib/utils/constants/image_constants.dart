@@ -1,10 +1,10 @@
 class ImageConstants {
-  static const String COCOPOWDER = "assets/images/coco_powder.jpg";
+  static String COCOPOWDER = 'assets/images/coco_powder.jpg';
 
-  static const String BAKINGSODA = "assets/images/baking_soda.jpeg";
+  static String BAKINGSODA = 'assets/images/baking_soda.jpeg';
 
-  static const String MILKPOWDER = "assets/images/milk_powder.jpeg";
-  static const String VANILAEXTRACT = "assets/images/vanila_extract.jpg";
+  static String MILKPOWDER = 'assets/images/milk_powder.jpeg';
+  static String VANILAEXTRACT = 'assets/images/vanila_extract.jpg';
   static String splashpic = 'assets/images/splashpic.jpg';
 
   static String logo = 'assets/images/oreoLogo.png';
@@ -27,5 +27,5 @@ class ImageConstants {
   static String bell = 'assets/images/bell.png';
   static String protection = 'assets/images/twofactor.png';
   static String logout = 'assets/images/logout.png';
-  static String butter = 'assets/images/butter.jpeg';
+  static String butter = 'assets/images/butter.png';
 }

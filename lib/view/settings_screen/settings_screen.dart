@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:hive/hive.dart';
+import 'package:oreo_scanner_task/model/bag_model.dart';
 import 'package:oreo_scanner_task/utils/constants/color_constants.dart';
 import 'package:oreo_scanner_task/utils/constants/image_constants.dart';
 import 'package:oreo_scanner_task/view/login_screen/login_screen.dart';
@@ -107,11 +109,18 @@ class _SettingsScreenState extends State<SettingsScreen> {
               purpose: 'Further secure your account for safety',
               isSwitch: false,
             ),
+            //to logout and go back to login screen by clearing login data
             InkWell(
               onTap: () async {
                 final SharedPreferences prefs =
                     await SharedPreferences.getInstance();
                 await prefs.clear();
+                //to clear the recently added items from the list at the time of log out
+                var box = await Hive.openBox<BagModel>("bags");
+                List listKeys = [];
+                await box.clear();
+                listKeys = box.keys.toList();
+                box.close();
                 Navigator.pushReplacement(
                     context,
                     MaterialPageRoute(
