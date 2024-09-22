@@ -11,9 +11,7 @@ import 'package:provider/provider.dart';
 
 class HomeScreen extends StatefulWidget {
   final TabController tabController;
-
   const HomeScreen({super.key, required this.tabController});
-
   @override
   State<HomeScreen> createState() => _HomeScreenState();
 }
@@ -31,7 +29,8 @@ class _HomeScreenState extends State<HomeScreen> {
         log(barcodeResult.toString());
         // Navigate to the second tab after scanning
         context.read<AddItemScreenController>().addScannedItemToBag(
-            barcodeResult.toString()); // to add scanned  item to bag
+            id: barcodeResult.toString(),
+            context: context); // to add scanned  item to bag
         widget.tabController.animateTo(
             1); //  to animate to tab  add item tab using tab controller after successful scanning
       }
@@ -58,7 +57,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         height: 50,
                         width: 125.5,
                         fit: BoxFit.contain,
-                        ImageConstants.OREOLOGO),
+                        ImageConstants.logo),
                     // seciton:2 Welcome section
 
                     Row(
@@ -79,13 +78,14 @@ class _HomeScreenState extends State<HomeScreen> {
                             ),
                           ],
                         ),
-                        ClipRRect(
-                          borderRadius: BorderRadius.circular(15),
-                          child: Image.network(
-                              height: 52,
-                              width: 54,
-                              fit: BoxFit.cover,
-                              "https://images.pexels.com/photos/9391641/pexels-photo-9391641.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2"),
+                        Container(
+                          height: 60,
+                          width: 60,
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(15),
+                              image: DecorationImage(
+                                  image:
+                                      AssetImage(ImageConstants.profilePic2))),
                         )
                       ],
                     ),

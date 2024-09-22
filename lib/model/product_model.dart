@@ -1,19 +1,19 @@
 class ProductModel {
-  final String itemId; // Unique ID for the item
-  final String name; // Name of the product
-  final String quantity; // Quantity of the product like kg, packet
-  final int number; // Number  of the product
-  final bool isRawMaterial; // Flag to know if it is a raw material or product
-  final String batchNumber; // Batch number for the product
-  final String imagePath;
+  String? itemId; // Unique ID for the item
+  String? name; // Name of the product
+  String? quantity; // Quantity of the product like kg, packet
+  int number; // Number of the product
+  bool? isRawMaterial; // Flag to know if it is a raw material or product
+  String? batchNumber; // Batch number for the product
+  String? imagePath; // Image path for the product
 
   ProductModel({
-    required this.imagePath,
-    required this.itemId,
-    required this.name,
-    required this.quantity,
+    this.imagePath,
+    this.itemId,
+    this.name,
+    this.quantity,
     this.number = 0,
-    required this.isRawMaterial,
-    required this.batchNumber,
+    this.isRawMaterial,
+    this.batchNumber,
   });
 }

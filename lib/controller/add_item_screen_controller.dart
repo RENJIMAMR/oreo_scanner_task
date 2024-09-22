@@ -5,7 +5,8 @@ import 'package:oreo_scanner_task/view/dummydb.dart';
 class AddItemScreenController with ChangeNotifier {
   List<ProductModel> scannedItems = [];
 
-  void addScannedItemToBag(String id) {
+  void addScannedItemToBag(
+      {required String id, required BuildContext context}) {
     // Check if the item with the given id is already in the scannedItems list
     bool itemExists = scannedItems.any((item) => item.itemId == id);
 
@@ -18,13 +19,49 @@ class AddItemScreenController with ChangeNotifier {
           orElse: () => throw Exception('Product not found'),
         );
 
-        scannedItems.add(product);
+        scannedItems.add(ProductModel(
+          batchNumber: product.batchNumber,
+          imagePath: product.imagePath,
+          isRawMaterial: product.isRawMaterial,
+          itemId: product.itemId,
+          name: product.name,
+          number: 1, // setting the initila required number of items to one
+          quantity: product.quantity,
+        ));
       } catch (e) {
         print(e);
       }
 
-      // Notify listeners about the change
       notifyListeners();
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text("Item Already in the bag"),
+          backgroundColor: Colors.red,
+        ),
+      );
     }
+  }
+
+  // Function to increment the number of an item needed
+  void incrementQuantity(int index) {
+    scannedItems[index].number = scannedItems[index].number + 1;
+    notifyListeners();
+  }
+
+  // Function to decrement the number of an item needed
+  void decrementQuantity(int index) {
+    if (scannedItems[index].number > 1) {
+      scannedItems[index].number = scannedItems[index].number - 1;
+    } else {
+      scannedItems.removeAt(
+          index); // to remove  and item  if the item number is less than one
+    }
+    notifyListeners();
+  }
+
+  void clearItemsInBag() {
+    scannedItems.clear();
+    notifyListeners();
   }
 }

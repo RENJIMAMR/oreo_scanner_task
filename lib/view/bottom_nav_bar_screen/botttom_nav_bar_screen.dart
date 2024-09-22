@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:oreo_scanner_task/utils/constants/color_constants.dart';
 import 'package:oreo_scanner_task/view/add_item_screen/add_item_screen.dart';
 import 'package:oreo_scanner_task/view/home_screen/home_screen.dart';
+import 'package:oreo_scanner_task/view/settings_screen/settings_screen.dart';
 
 class BottomNavBarScreen extends StatefulWidget {
   const BottomNavBarScreen({super.key});
@@ -34,7 +35,7 @@ class _BottomNavBarScreenState extends State<BottomNavBarScreen>
       body: TabBarView(controller: _tabController, children: [
         HomeScreen(tabController: _tabController),
         AddItemScreen(),
-        HomeScreen(tabController: _tabController),
+        SettingsScreen()
       ]),
       bottomNavigationBar: Padding(
         padding: const EdgeInsets.only(left: 16, right: 16, bottom: 15),
